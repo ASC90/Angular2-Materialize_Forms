@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
+import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-form',
@@ -26,7 +26,8 @@ export class FormComponent implements OnInit {
     this.createForm();
   }
   createForm() {
-    this.form = this.formBuilder.group({ lastName: '', password: '', confirm: '', conditions: false });
+    this.form = this.formBuilder.group({ lastName: new FormControl ('', Validators.compose([Validators.required, Validators.pattern(this.regExpName)])), 
+    password: '', confirm: '', conditions: false });
   }
   onKeyUp() {
     this.showOkey = false;

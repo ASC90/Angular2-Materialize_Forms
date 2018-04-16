@@ -8,7 +8,7 @@
             <i *ngIf="form.controls.lastName.valid" class="material-icons prefix valign-wrapper i-valid">check</i>
           </div>
           <input class="form-control" id="last_name" type="text" [class.valid]="form.controls.lastName.valid && hasSubmitted" [class.invalid]="form.controls.lastName.invalid && hasSubmitted"
-            formControlName="lastName" name="lastName" required [pattern]="regExpName" (keyup)="onKeyUp()">
+            formControlName="lastName" name="lastName" (keyup)="onKeyUp()" autocomplete="false">
           <label for="last_name" [attr.data-error]="errorMsgName" data-success="Correct Last Name">Last Name</label>
         </div>
       </div>
