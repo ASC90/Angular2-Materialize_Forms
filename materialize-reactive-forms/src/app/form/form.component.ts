@@ -26,7 +26,7 @@ export class FormComponent implements OnInit {
     this.createForm();
   }
   createForm() {
-    this.form = this.formBuilder.group({ lastName: new FormControl ('', Validators.compose([Validators.required, Validators.pattern(this.regExpName)])), 
+    this.form = this.formBuilder.group({ lastName: new FormControl ('', Validators.compose([Validators.required, Validators.pattern(this.regExpName)])),
     password: '', confirm: '', conditions: false });
   }
   onKeyUp() {
