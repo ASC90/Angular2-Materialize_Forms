@@ -1,0 +1,54 @@
+<div class="container">
+  <div class="row">
+    <form class="col s12 m12 l8 xl6 offset-l2 offset-xl3" [formGroup]="form">
+      <div class="row form-group">
+        <div class="input-field col s12">
+          <div *ngIf="hasSubmitted" class="prefix">
+            <i *ngIf="!form.controls.lastName.valid" class="material-icons prefix valign-wrapper i-invalid">clear</i>
+            <i *ngIf="form.controls.lastName.valid" class="material-icons prefix valign-wrapper i-valid">check</i>
+          </div>
+          <input class="form-control" id="last_name" type="text" [class.valid]="form.controls.lastName.valid && hasSubmitted" [class.invalid]="form.controls.lastName.invalid && hasSubmitted"
+            formControlName="lastName" name="lastName" required [pattern]="regExpName" (keyup)="onKeyUp()">
+          <label for="last_name" [attr.data-error]="errorMsgName" data-success="Correct Last Name">Last Name</label>
+        </div>
+      </div>
+      <div class="row form-group">
+        <div class="input-field input-group col s12">
+          <div *ngIf="hasSubmitted" class="prefix">
+            <i *ngIf="!form.controls.password.valid" class="material-icons prefix valign-wrapper i-invalid">clear</i>
+            <i *ngIf="form.controls.password.valid" class="material-icons prefix valign-wrapper i-valid">check</i>
+          </div>
+          <input class="form-control" id="password" [type]="passwordType" [class.valid]="form.controls.password.valid && hasSubmitted"
+            [class.invalid]="form.controls.password.invalid && hasSubmitted" formControlName="password" name="password" required
+            [pattern]="regExpPassword" (keyup)="onKeyUp()" autocomplete="off">
+          <label for="password" [attr.data-error]="errorMsgPassword" data-success="Correct Password">Password</label>
+          <i (click)="showPassword()" [class.i-reveal]="!showPasswordSwitch" [class.i-hide]="showPasswordSwitch" class="material-icons suffix valign-wrapper">remove_red_eye</i>
+        </div>
+      </div>
+      <div class="row form-group">
+        <div class="input-field input-group col s12">
+          <div *ngIf="hasSubmitted" class="prefix">
+            <i *ngIf="alwaysArror" class="material-icons prefix valign-wrapper i-invalid">clear</i>
+            <i *ngIf="form.controls.confirm.valid && showOkey" class="material-icons prefix valign-wrapper i-valid">check</i>
+          </div>
+          <!--appPassword [passwordStr]="form.controls.password.value" [thisObjControl]="this.form.controls.confirm"-->
+          <input class="form-control" id="confirm" [type]="confirmType" [class.valid]="form.controls.confirm.valid && hasSubmitted"
+            [class.invalid]="form.controls.confirm.invalid && hasSubmitted" formControlName="confirm" name="confirm" required
+            [pattern]="regExpPassword" (keyup)="onKeyUp()" autocomplete="off">
+          <label for="confirm" [attr.data-error]="errorMsgConfirm" data-success="Password match">Confirm Password</label>
+          <i (click)="showConfirm()" [class.i-reveal]="!showConfirmSwitch" [class.i-hide]="showConfirmSwitch" class="material-icons suffix valign-wrapper">remove_red_eye</i>
+        </div>
+      </div>
+      <div class="row form-group">
+        <div class="col s12 valign-wrapper">
+          <input formControlName="conditions" name="conditions" type="checkbox" id="conditions" />
+          <label for="conditions"></label>
+          <span>I accept the</span>
+          <app-modal (onAgreed)="onAgreed($event)"></app-modal>
+        </div>
+      </div>
+      <button (click)="onSubmit()" class="btn waves-effect">Submit</button>
+    </form>
+  </div>
+</div>
+{{fecha.getTime()}}
