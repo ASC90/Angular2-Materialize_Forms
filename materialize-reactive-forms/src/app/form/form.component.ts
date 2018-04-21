@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormBuilder, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
+import "rxjs/add/observable/of";
 
 @Component({
   selector: 'app-form',
@@ -21,16 +23,27 @@ export class FormComponent implements OnInit {
   showOkey = true;
   alwaysArror = true;
   fecha = new Date('2012-11-25');
+  capsLock: boolean;
   constructor(private formBuilder: FormBuilder) { }
   ngOnInit() {
     this.createForm();
   }
   createForm() {
-    this.form = this.formBuilder.group({ lastName: new FormControl ('', Validators.compose([Validators.required, Validators.pattern(this.regExpName)])),
-    password: '', confirm: '', conditions: false });
+    this.form = this.formBuilder.group({
+      lastName: new FormControl('', Validators.compose([Validators.required, Validators.pattern(this.regExpName)])),
+      passwords: this.formBuilder.group({
+        password: new FormControl ('', Validators.compose([Validators.required, Validators.pattern(this.regExpPassword)])),
+        confirm: new FormControl ('', Validators.compose([ Validators.required, Validators.pattern(this.regExpPassword)]))
+      }, {
+          validator: this.areEqual()
+        }),
+      conditions: false
+    });
+    console.log('Original form', this.form);
   }
-  onKeyUp() {
+  onKeyUp(event?) {
     this.showOkey = false;
+    this.capsLock = event.getModifierState('CapsLock');
     // Errores last name
     if (this.form.controls.lastName.errors) {
       if (this.form.controls.lastName.errors.required) {
@@ -40,14 +53,24 @@ export class FormComponent implements OnInit {
       }
     }
     // Errores password
-    if (this.form.controls.password.errors) {
-      if (this.form.controls.password.errors.required) {
+    if (this.form.controls.passwords && this.form['controls'].passwords['controls'] ) {
+      if (this.form.controls.passwords['controls'].password.errors && this.form.controls.passwords['controls'].password.errors.required) {
         this.errorMsgPassword = 'Password required';
-      } else if (this.form.controls.password.errors.pattern) {
+      } else if (this.form.controls.passwords['controls'].password.errors && this.form.controls.passwords['controls'].password.errors.pattern) {
         this.errorMsgPassword = 'Need to write more than 2 characters and les than 11 & no special characters';
       }
     }
-    // Error de cruz y tick de ok
+    // Errores confirmación password
+    if (this.form.controls.passwords && this.form.controls.passwords['controls']) {
+      if (this.form.controls.passwords['controls'].confirm.errors && this.form.controls.passwords['controls'].confirm.errors.required) {
+        this.errorMsgConfirm = 'Password required';
+      } else if (this.form.controls.passwords['controls'].confirm.errors && this.form.controls.passwords['controls'].confirm.errors.pattern ) {
+        this.errorMsgConfirm = 'Need to write more than 2 characters and les than 11 & no special characters';
+      } else if (this.form.controls.passwords.errors && this.form.controls.passwords.errors.areEqual) {
+        this.errorMsgConfirm = 'Passwords does not match';
+      }
+    }
+    /*// Error de cruz y tick de ok
     if (!this.form.controls.confirm.errors) {
       setTimeout(() => {
         this.showOkey = true;
@@ -66,11 +89,11 @@ export class FormComponent implements OnInit {
         }
       }, 10);
     }
-    /*if (this.form.controls.confirm.valid && this.showOkey) {
+    if (this.form.controls.confirm.valid && this.showOkey) {
       this.alwaysArror = false;
     } else {
       this.alwaysArror = true;
-    }*/
+    }
     // Setear error custom
     if (!this.form.controls.confirm.errors) {
       if (this.form.controls.password.value != this.form.controls.confirm.value || this.form.controls.password.value == '') {
@@ -94,7 +117,7 @@ export class FormComponent implements OnInit {
       } else if (this.form.controls.confirm.errors.nomatch) {
         this.errorMsgConfirm = "The passwords does't match";
       }
-    }
+    }*/
   }
   onSubmit() {
     this.hasSubmitted = true;
@@ -110,7 +133,7 @@ export class FormComponent implements OnInit {
     } else {
       this.confirmType = 'text';
     }
-    
+
   }
   showPassword() {
     this.showPasswordSwitch = !this.showPasswordSwitch;
@@ -123,5 +146,16 @@ export class FormComponent implements OnInit {
   onAgreed(agreed: boolean) {
     console.log(agreed);
     this.form.controls.conditions.setValue(agreed);
+  }
+  areEqual(): ValidatorFn {
+    /*let passwords = { password: group.controls.password.value, confirm: group.controls.confirm.value }
+    if (passwords.password != passwords.confirm) {
+      return Observable.of(null);
+    } else {
+      return Observable.of({ areEqual: true });
+    }*/
+    return (control) => {
+      return (control.get('password').value === control.get('confirm').value) ? null : {'areEqual': true};
+      };
   }
 }
